@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resnet50 Model's Prediction</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 1em;
+        }
+
+        nav {
+            background-color: #343a40;
+            padding: 0.5em;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 1em;
+            margin: 0 1em;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        section {
+            max-width: 600px;
+            margin: 2em auto;
+            padding: 2em;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="submit"] {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #result p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Resnet50 Model's Prediction</h1>
+    </header>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <section>
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <label for="file-upload" class="custom-file-upload">
+                Choose File
+            </label>
+            <input id="file-upload" type="file" name="file" onchange="resetResult()">
+            <input type="submit" value="Predict">
+        </form>
+        <div id="result">
+            <p id="predicted-class"></p>
+        </div>
+    </section>
+    <script>
+        function resetResult() {
+            document.getElementById('predicted-class').textContent = '';
+        }
+
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            uploadImage();
+        });
+
+        function uploadImage() {
+            var fileInput = document.querySelector('input[type="file"]');
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResult(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function displayResult(data) {
+            var predictedClassSpan = document.getElementById('predicted-class');
+
+            // Clear previous prediction
+            predictedClassSpan.textContent = '';
+
+            if (data.error) {
+                predictedClassSpan.textContent = 'Error: ' + data.error;
+            } else {
+                predictedClassSpan.textContent = 'Predicted Class: ' + data.predicted_class;
+            }
+        }
+    </script>
+</body>
+</html>
