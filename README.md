@@ -1,2 +1,2 @@
-# Diabetic-retinopathy-Detection
-This website detects Diabetic retinopathy 
+# Diabetic Retinopathy Detection
+This website detects Diabetic Retinopathy 
